@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<ul>
+    <h3>Students</h3>
+    {% for student in student %}
+    <li><h4>{{ student.email}}</h4>  <h4>{{student.last_name}}</h4></li>
+    {% endfor %}
+    <h3> Teachers </h3>
+    {% for teacher in teacher %}
+    <li><h4>{{ teacher.email}}</h4>  <h4>{{teacher.last_name}}</h4></li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
