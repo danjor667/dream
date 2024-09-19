@@ -18,7 +18,7 @@ from dreametrix.models import School, Admin
 def index(request):
     return JsonResponse({"nothing": "nothing"})
 
-class UserCreate(mixins.CreateModelMixin, generics.GenericAPIView):
+class UserCreate(mixins.CreateModelMixin, mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = UserSerializer
     queryset = Admin.objects.all()
     renderer_classes = (renderers.JSONRenderer,)
@@ -26,11 +26,12 @@ class UserCreate(mixins.CreateModelMixin, generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print(serializer.validated_data)
             user = serializer.save()
-            print("user saved")
             return Response({"email": user.email}, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 register_view = UserCreate.as_view()
 
