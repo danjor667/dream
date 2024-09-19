@@ -44,7 +44,7 @@ class UserLogin(APIView):
         email = data.get("email")
         password = data.get("password")
         print(email, password)
-        user = Admin.objects.filter(email=email, password=password)[0]
+        user = Admin.objects.filter(email=email, password=password).first()
         if user:
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'email': user.email, 'token': token.key}, status=status.HTTP_200_OK)
