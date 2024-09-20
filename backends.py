@@ -1,7 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
-from school.models import CustomUser
-from dreametrix.models import Admin
+
+User = get_user_model()
 
 class PublicSchemaBackend(ModelBackend):
 
@@ -9,37 +10,41 @@ class PublicSchemaBackend(ModelBackend):
         if username is None:
             username = kwargs.get('email')
         try:
-            user = Admin.objects.get(username=username)  # to check if email is better
+            print("1111")
+            user = User.objects.get(email=username)  # to check if email is better
+            print("trying the user")
             if user.check_password(password):
+                print("returning the user")
                 return user
-        except Admin.DoesNotExist:
+        except User.DoesNotExist:
+            print("user does not exist")
             return None
 
     def get_user(self, user_id):
         try:
-            return Admin.objects.get(pk=user_id)
-        except Admin.DoesNotExist:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
             return None
 
 
 
-class TenantSchemaBackend(ModelBackend):
-
-    def authenticate(self, request, username=None, password=None, **kwargs):
-        print("tenant schema backend")
-
-        if username is None:
-            username = kwargs.get('email')
-        try:
-            user = CustomUser.objects.get(username=username, password=password)
-            if user:
-                print("user exists")
-                return user
-        except CustomUser.DoesNotExist:
-            return None
-
-    def get_user(self, user_id):
-        try:
-            return CustomUser.objects.get(pk=user_id)
-        except CustomUser.DoesNotExist:
-            return None
+# class TenantSchemaBackend(ModelBackend):
+#
+#     def authenticate(self, request, username=None, password=None, **kwargs):
+#         print("tenant schema backend")
+#
+#         if username is None:
+#             username = kwargs.get('email')
+#         try:
+#             user = CustomUser.objects.get(username=username, password=password)
+#             if user:
+#                 print("user exists")
+#                 return user
+#         except CustomUser.DoesNotExist:
+#             return None
+#
+#     def get_user(self, user_id):
+#         try:
+#             return CustomUser.objects.get(pk=user_id)
+#         except CustomUser.DoesNotExist:
+#             return None

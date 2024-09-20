@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.http import JsonResponse
 from django.shortcuts import render
 from django_tenants.utils import schema_context
@@ -7,10 +7,12 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins, status
+from dreametrix.models import User
 
 from api.serializers import UserSerializer
 from rest_framework.authtoken.models import Token
-from dreametrix.models import School, Admin
+from dreametrix.models import School
+
 
 
 
@@ -20,10 +22,11 @@ def index(request):
 
 class UserCreate(mixins.CreateModelMixin, mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = UserSerializer
-    queryset = Admin.objects.all()
+    queryset = User.objects.all()
     renderer_classes = (renderers.JSONRenderer,)
 
     def post(self, request, *args, **kwargs):
+        print("entering")
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -38,14 +41,11 @@ register_view = UserCreate.as_view()
 
 
 class UserLogin(APIView):
-    serializer_class = UserSerializer
-    renderer_classes = (renderers.JSONRenderer,)
-    def post(self, request, **kwargs):
+    def post(self, request, *arg,  **kwargs):
         data = request.data
         email = data.get("email")
         password = data.get("password")
-        print(email, password)
-        user = Admin.objects.filter(email=email, password=password).first()
+        user = authenticate(request, email=email, password=password)
         if user:
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'email': user.email, 'token': token.key}, status=status.HTTP_200_OK)

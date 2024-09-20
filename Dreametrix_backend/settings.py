@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
-    'middlewares.CustomMiddleware',
+    "middlewares.CustomMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -72,7 +72,7 @@ MIDDLEWARE = [
 ]
 
 
-AUTH_USER_MODEL = 'dreametrix.Admin'
+AUTH_USER_MODEL = 'dreametrix.User'
 
 ROOT_URLCONF = 'Dreametrix_backend.urls'
 
@@ -98,17 +98,29 @@ WSGI_APPLICATION = 'Dreametrix_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        "PORT": 5432,
-        "HOST": os.environ.get('DATABASE_HOST'),
-        'USER': os.environ.get('DATABASE_USER'),
+if DEBUG:
+    SECRET_KEY = "ijvkdfxjgdflkbgjgkngjfgbklgjnk"
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django_tenants.postgresql_backend',
+            'NAME': "testing",
+            'PASSWORD': "danjor",
+            "PORT": 5432,
+            "HOST": "localhost",
+            'USER': "postgres",
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django_tenants.postgresql_backend',
+            'NAME': os.environ.get('DATABASE_NAME'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+            "PORT": 5432,
+            "HOST": os.environ.get('DATABASE_HOST'),
+            'USER': os.environ.get('DATABASE_USER'),
+        }
+    }
 
 
 DATABASE_ROUTERS = [
